@@ -14,7 +14,7 @@ namespace dbFirst
             {
                 var users = db.Users;
                 foreach (User u in users)
-                    Console.WriteLine("{0}.{1} - {2}", u.ID, u.Name, u.Age);
+                    Console.WriteLine("{0}.{1} -- {2}", u.ID, u.Name, u.Age);
             }
         }
     }
