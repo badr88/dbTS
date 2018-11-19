@@ -1,0 +1,430 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TESTModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Age" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ZKLC_CustomerCards">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustID" Type="int" />
+          <Property Name="CardNo" Type="varchar" MaxLength="16" />
+          <Property Name="SecretCode" Type="varchar" MaxLength="50" />
+          <Property Name="ExpiryDate" Type="date" />
+          <Property Name="Blocked" Type="int" />
+          <Property Name="Deleted" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="CreateUser" Type="varchar" MaxLength="50" />
+          <Property Name="BlockDate" Type="datetime" />
+          <Property Name="BlockUser" Type="varchar" MaxLength="50" />
+          <Property Name="DeleteDate" Type="datetime" />
+          <Property Name="DeleteUser" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ZKLC_Customers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="First_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Last_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Middle_Name" Type="varchar" MaxLength="50" />
+          <Property Name="TaxID" Type="varchar" MaxLength="9" />
+          <Property Name="Sts" Type="int" />
+        </EntityType>
+        <EntityType Name="ZKLC_RequestLogs">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CardN" Type="varchar" MaxLength="16" />
+          <Property Name="FIO" Type="varchar" MaxLength="300" />
+          <Property Name="Amount" Type="money" />
+          <Property Name="Comments" Type="varchar" MaxLength="300" />
+          <Property Name="ReqDate" Type="datetime" />
+          <Property Name="Description" Type="varchar" MaxLength="300" />
+          <Property Name="rUrl" Type="varchar" MaxLength="300" />
+          <Property Name="rIP" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="ZKLC_Transfers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustID" Type="int" />
+          <Property Name="CardID" Type="int" />
+          <Property Name="Amount" Type="money" />
+          <Property Name="Description" Type="varchar" MaxLength="300" />
+          <Property Name="DeleteSTS" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="CreateUser" Type="nvarchar" MaxLength="50" />
+          <Property Name="DeleteDate" Type="datetime" />
+          <Property Name="DeleteUser" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_ZKLC_Customer_ZKLC_CustomerCards">
+          <End Role="ZKLC_Customers" Type="Self.ZKLC_Customers" Multiplicity="0..1" />
+          <End Role="ZKLC_CustomerCards" Type="Self.ZKLC_CustomerCards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_CustomerCards">
+              <PropertyRef Name="CustID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ZKLC_CustomerCards_ZKLC_Transfers">
+          <End Role="ZKLC_CustomerCards" Type="Self.ZKLC_CustomerCards" Multiplicity="0..1" />
+          <End Role="ZKLC_Transfers" Type="Self.ZKLC_Transfers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_CustomerCards">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_Transfers">
+              <PropertyRef Name="CardID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ZKLC_Customers_ZKLC_Transfers">
+          <End Role="ZKLC_Customers" Type="Self.ZKLC_Customers" Multiplicity="0..1" />
+          <End Role="ZKLC_Transfers" Type="Self.ZKLC_Transfers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_Transfers">
+              <PropertyRef Name="CustID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetSysTabs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="schID" Type="int" Mode="In" />
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="object_id" Type="int" Nullable="false" />
+                <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+                <Property Name="type" Type="char" MaxLength="2" Nullable="false" />
+                <Property Name="type_desc" Type="nvarchar" MaxLength="60" />
+                <Property Name="create_date" Type="datetime" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="ZKLC_SetTransfer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="cardN" Type="varchar" Mode="In" />
+          <Parameter Name="FIO" Type="varchar" Mode="In" />
+          <Parameter Name="amount" Type="money" Mode="In" />
+          <Parameter Name="comments" Type="varchar" Mode="In" />
+          <Parameter Name="sts" Type="int" Mode="In" />
+          <Parameter Name="rUrl" Type="varchar" Mode="In" />
+          <Parameter Name="rIP" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="TESTModelStoreContainer">
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZKLC_CustomerCards" EntityType="Self.ZKLC_CustomerCards" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZKLC_Customers" EntityType="Self.ZKLC_Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZKLC_RequestLogs" EntityType="Self.ZKLC_RequestLogs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZKLC_Transfers" EntityType="Self.ZKLC_Transfers" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ZKLC_Customer_ZKLC_CustomerCards" Association="Self.FK_ZKLC_Customer_ZKLC_CustomerCards">
+            <End Role="ZKLC_Customers" EntitySet="ZKLC_Customers" />
+            <End Role="ZKLC_CustomerCards" EntitySet="ZKLC_CustomerCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ZKLC_CustomerCards_ZKLC_Transfers" Association="Self.FK_ZKLC_CustomerCards_ZKLC_Transfers">
+            <End Role="ZKLC_CustomerCards" EntitySet="ZKLC_CustomerCards" />
+            <End Role="ZKLC_Transfers" EntitySet="ZKLC_Transfers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ZKLC_Customers_ZKLC_Transfers" Association="Self.FK_ZKLC_Customers_ZKLC_Transfers">
+            <End Role="ZKLC_Customers" EntitySet="ZKLC_Customers" />
+            <End Role="ZKLC_Transfers" EntitySet="ZKLC_Transfers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TESTModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <ComplexType Name="GetSysTabs_Result">
+          <Property Name="object_id" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="type" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="type_desc" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Age" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ZKLC_CustomerCards">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustID" Type="Int32" />
+          <Property Name="CardNo" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="SecretCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Blocked" Type="Int32" />
+          <Property Name="Deleted" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BlockDate" Type="DateTime" Precision="3" />
+          <Property Name="BlockUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DeleteDate" Type="DateTime" Precision="3" />
+          <Property Name="DeleteUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ZKLC_Customers" Relationship="Self.FK_ZKLC_Customer_ZKLC_CustomerCards" FromRole="ZKLC_CustomerCards" ToRole="ZKLC_Customers" />
+          <NavigationProperty Name="ZKLC_Transfers" Relationship="Self.FK_ZKLC_CustomerCards_ZKLC_Transfers" FromRole="ZKLC_CustomerCards" ToRole="ZKLC_Transfers" />
+        </EntityType>
+        <EntityType Name="ZKLC_Customers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="First_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Last_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Middle_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TaxID" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="Sts" Type="Int32" />
+          <NavigationProperty Name="ZKLC_CustomerCards" Relationship="Self.FK_ZKLC_Customer_ZKLC_CustomerCards" FromRole="ZKLC_Customers" ToRole="ZKLC_CustomerCards" />
+          <NavigationProperty Name="ZKLC_Transfers" Relationship="Self.FK_ZKLC_Customers_ZKLC_Transfers" FromRole="ZKLC_Customers" ToRole="ZKLC_Transfers" />
+        </EntityType>
+        <EntityType Name="ZKLC_RequestLogs">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CardN" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="FIO" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Comments" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ReqDate" Type="DateTime" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="rUrl" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="rIP" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ZKLC_Transfers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustID" Type="Int32" />
+          <Property Name="CardID" Type="Int32" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="DeleteSTS" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DeleteDate" Type="DateTime" Precision="3" />
+          <Property Name="DeleteUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ZKLC_CustomerCards" Relationship="Self.FK_ZKLC_CustomerCards_ZKLC_Transfers" FromRole="ZKLC_Transfers" ToRole="ZKLC_CustomerCards" />
+          <NavigationProperty Name="ZKLC_Customers" Relationship="Self.FK_ZKLC_Customers_ZKLC_Transfers" FromRole="ZKLC_Transfers" ToRole="ZKLC_Customers" />
+        </EntityType>
+        <Association Name="FK_ZKLC_Customer_ZKLC_CustomerCards">
+          <End Role="ZKLC_Customers" Type="Self.ZKLC_Customers" Multiplicity="0..1" />
+          <End Role="ZKLC_CustomerCards" Type="Self.ZKLC_CustomerCards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_CustomerCards">
+              <PropertyRef Name="CustID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ZKLC_CustomerCards_ZKLC_Transfers">
+          <End Role="ZKLC_CustomerCards" Type="Self.ZKLC_CustomerCards" Multiplicity="0..1" />
+          <End Role="ZKLC_Transfers" Type="Self.ZKLC_Transfers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_CustomerCards">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_Transfers">
+              <PropertyRef Name="CardID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ZKLC_Customers_ZKLC_Transfers">
+          <End Role="ZKLC_Customers" Type="Self.ZKLC_Customers" Multiplicity="0..1" />
+          <End Role="ZKLC_Transfers" Type="Self.ZKLC_Transfers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZKLC_Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ZKLC_Transfers">
+              <PropertyRef Name="CustID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TESTEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="ZKLC_CustomerCards" EntityType="Self.ZKLC_CustomerCards" />
+          <EntitySet Name="ZKLC_Customers" EntityType="Self.ZKLC_Customers" />
+          <EntitySet Name="ZKLC_RequestLogs" EntityType="Self.ZKLC_RequestLogs" />
+          <EntitySet Name="ZKLC_Transfers" EntityType="Self.ZKLC_Transfers" />
+          <AssociationSet Name="FK_ZKLC_Customer_ZKLC_CustomerCards" Association="Self.FK_ZKLC_Customer_ZKLC_CustomerCards">
+            <End Role="ZKLC_Customers" EntitySet="ZKLC_Customers" />
+            <End Role="ZKLC_CustomerCards" EntitySet="ZKLC_CustomerCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ZKLC_CustomerCards_ZKLC_Transfers" Association="Self.FK_ZKLC_CustomerCards_ZKLC_Transfers">
+            <End Role="ZKLC_CustomerCards" EntitySet="ZKLC_CustomerCards" />
+            <End Role="ZKLC_Transfers" EntitySet="ZKLC_Transfers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ZKLC_Customers_ZKLC_Transfers" Association="Self.FK_ZKLC_Customers_ZKLC_Transfers">
+            <End Role="ZKLC_Customers" EntitySet="ZKLC_Customers" />
+            <End Role="ZKLC_Transfers" EntitySet="ZKLC_Transfers" />
+          </AssociationSet>
+          <FunctionImport Name="GetSysTabs" IsComposable="true" ReturnType="Collection(TESTModel.GetSysTabs_Result)">
+            <Parameter Name="schID" Mode="In" Type="Int32" />
+            <Parameter Name="type" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ZKLC_SetTransfer" ReturnType="Collection(TESTModel.ZKLC_SetTransfer_Result)">
+            <Parameter Name="cardN" Mode="In" Type="String" />
+            <Parameter Name="FIO" Mode="In" Type="String" />
+            <Parameter Name="amount" Mode="In" Type="Decimal" />
+            <Parameter Name="comments" Mode="In" Type="String" />
+            <Parameter Name="sts" Mode="In" Type="Int32" />
+            <Parameter Name="rUrl" Mode="In" Type="String" />
+            <Parameter Name="rIP" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="ZKLC_SetTransfer_Result">
+          <Property Type="Int32" Name="trnid" Nullable="true" />
+          <Property Type="Int32" Name="code" Nullable="false" />
+          <Property Type="String" Name="msg" Nullable="false" MaxLength="2" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TESTModelStoreContainer" CdmEntityContainer="TESTEntities">
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="TESTModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZKLC_CustomerCards">
+            <EntityTypeMapping TypeName="TESTModel.ZKLC_CustomerCards">
+              <MappingFragment StoreEntitySet="ZKLC_CustomerCards">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustID" ColumnName="CustID" />
+                <ScalarProperty Name="CardNo" ColumnName="CardNo" />
+                <ScalarProperty Name="SecretCode" ColumnName="SecretCode" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Blocked" ColumnName="Blocked" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateUser" ColumnName="CreateUser" />
+                <ScalarProperty Name="BlockDate" ColumnName="BlockDate" />
+                <ScalarProperty Name="BlockUser" ColumnName="BlockUser" />
+                <ScalarProperty Name="DeleteDate" ColumnName="DeleteDate" />
+                <ScalarProperty Name="DeleteUser" ColumnName="DeleteUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZKLC_Customers">
+            <EntityTypeMapping TypeName="TESTModel.ZKLC_Customers">
+              <MappingFragment StoreEntitySet="ZKLC_Customers">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="First_Name" ColumnName="First_Name" />
+                <ScalarProperty Name="Last_Name" ColumnName="Last_Name" />
+                <ScalarProperty Name="Middle_Name" ColumnName="Middle_Name" />
+                <ScalarProperty Name="TaxID" ColumnName="TaxID" />
+                <ScalarProperty Name="Sts" ColumnName="Sts" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZKLC_RequestLogs">
+            <EntityTypeMapping TypeName="TESTModel.ZKLC_RequestLogs">
+              <MappingFragment StoreEntitySet="ZKLC_RequestLogs">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CardN" ColumnName="CardN" />
+                <ScalarProperty Name="FIO" ColumnName="FIO" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="ReqDate" ColumnName="ReqDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="rUrl" ColumnName="rUrl" />
+                <ScalarProperty Name="rIP" ColumnName="rIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZKLC_Transfers">
+            <EntityTypeMapping TypeName="TESTModel.ZKLC_Transfers">
+              <MappingFragment StoreEntitySet="ZKLC_Transfers">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustID" ColumnName="CustID" />
+                <ScalarProperty Name="CardID" ColumnName="CardID" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DeleteSTS" ColumnName="DeleteSTS" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateUser" ColumnName="CreateUser" />
+                <ScalarProperty Name="DeleteDate" ColumnName="DeleteDate" />
+                <ScalarProperty Name="DeleteUser" ColumnName="DeleteUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionName="TESTModel.Store.GetSysTabs" FunctionImportName="GetSysTabs">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TESTModel.GetSysTabs_Result">
+                <ScalarProperty Name="object_id" ColumnName="object_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="type_desc" ColumnName="type_desc" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ZKLC_SetTransfer" FunctionName="TESTModel.Store.ZKLC_SetTransfer">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TESTModel.ZKLC_SetTransfer_Result">
+                <ScalarProperty Name="trnid" ColumnName="trnid" />
+                <ScalarProperty Name="code" ColumnName="code" />
+                <ScalarProperty Name="msg" ColumnName="msg" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
